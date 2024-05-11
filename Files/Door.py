@@ -15,11 +15,21 @@ from encoder import DEFAULT_ENCODINGS_PATH
 AFTER_HOURS = datetime.now().replace(hour=16, minute=0, second=0, microsecond=0)  # 4:00 PM
 
 # Initialize serial communication with arduino
-ser = serial.Serial('COM5', 9600)  # Check Device manager for COM number
+# ser = serial.Serial('COM5', 9600)  # Check Device manager for COM number
+
+# Define the path to the Logs folder
+logs_folder = "Logs"
+
+# Create the Logs folder if it doesn't exist
+if not os.path.exists(logs_folder):
+    os.makedirs(logs_folder)
+
+# Define the file path within the Logs folder
+file_path = os.path.join(logs_folder, f"{datetime.now().strftime('%Y-%m-%d')} logs.txt")
 
 # Function to send message to arduino just to make things look simpler
-def send_to_arduino(message):
-    ser.write(message.encode())
+# def send_to_arduino(message):
+#     ser.write(message.encode())
 
 
 # Main function
@@ -72,7 +82,7 @@ def main():
                         # Ensure only ONE message is sent
                         if message_sent == False:
                             print(message + "\n")
-                            send_to_arduino(message)
+                            # send_to_arduino(message)
                             log.append((datetime.now(), logmsg))
                             # Set flag to show that a message was sent and a log was generated
                             message_sent = True
@@ -82,7 +92,7 @@ def main():
                         # Ensure only ONE message is sent
                         if not message_sent:
                             print(message + "\n")
-                            send_to_arduino(message)
+                            # send_to_arduino(message)
                             log.append((datetime.now(), message))
                             # Set flag to show that a message was sent and a log was generated
                             message_sent = True
@@ -104,7 +114,7 @@ def main():
             break
 
     # Save logs to a text file
-    with open(f"{datetime.now().strftime('%Y-%m-%d')} logs.txt", "w") as f:
+    with open(file_path, "w") as f:
         for timestamp, message in log:
             f.write(f"{timestamp}: {message}\n")
 
